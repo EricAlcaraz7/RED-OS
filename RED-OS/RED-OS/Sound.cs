@@ -1,34 +1,26 @@
-﻿//Sound.cs
+﻿//sound.cs
 using System;
+using Sys = Cosmos.System;
 
 namespace CosmosKernel1
 {
-    // Gestiona los sonidos del sistema
     public static class Sound
     {
-        public static void Beep(int frequency, int duration)
+        public static void Beep(uint freq, uint dur)
         {
-            // Console.Beep puede no funcionar en Cosmos
-            try { Console.Beep(frequency, duration); }
-            catch { }
+            try { Sys.PCSpeaker.Beep(freq, dur); } catch { }
         }
 
         public static void StartupSound()
         {
-            Beep(800, 150);
-            Beep(1000, 150);
-            Beep(1200, 200);
+            Beep(800, 100); Beep(1000, 100); Beep(1200, 150);
         }
 
         public static void SuccessSound()
         {
-            Beep(1000, 100);
-            Beep(1200, 100);
+            Beep(1000, 100); Beep(1200, 100);
         }
 
-        public static void ErrorSound()
-        {
-            Beep(400, 300);
-        }
+        public static void ErrorSound() => Beep(400, 300);
     }
 }
