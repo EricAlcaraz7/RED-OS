@@ -1,4 +1,6 @@
-﻿//FileSystemManager.cs
+﻿// FileSystemManager.cs
+// Sistema de archivos basico usando Cosmos VFS
+
 using System;
 using System.IO;
 using Sys = Cosmos.System;
@@ -7,59 +9,111 @@ namespace CosmosKernel1
 {
     public static class FileSystemManager
     {
-        public static void ListarDirectorio(string path)
+        private static Sys.FileSystem.CosmosVFS fs;
+
+        public static void Init()
+        {
+            fs = new Sys.FileSystem.CosmosVFS();
+            Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
+        }
+
+        public static void Listar(string path)
         {
             try
             {
-                var files = Directory.GetFiles(path);
                 var dirs = Directory.GetDirectories(path);
-                foreach (var d in dirs) Console.WriteLine("<DIR> " + d);
-                foreach (var f in files) Console.WriteLine("      " + f);
-                Sound.SuccessSound();
+                var files = Directory.GetFiles(path);
+
+                GraphicsManager.WriteLine("");
+                GraphicsManager.WriteLine("===== DIRECTORIO =====");
+
+                foreach (var d in dirs)
+                    GraphicsManager.WriteLine("<DIR> " + d);
+
+                foreach (var f in files)
+                    GraphicsManager.WriteLine("      " + f);
+
+                GraphicsManager.WriteLine("======================");
             }
-            catch { Sound.ErrorSound(); Console.WriteLine("Error al llistar."); }
+            catch
+            {
+                GraphicsManager.WriteLine("Error al llistar directori.");
+                Sound.ErrorSound();
+            }
         }
 
         public static void CrearFitxer()
         {
             try
             {
-                Console.Write("Nom del fitxer: ");
-                string nom = Console.ReadLine();
-                Console.Write("Contingut: ");
-                string text = Console.ReadLine();
-                File.WriteAllText(@"0:\" + nom, text);
-                Console.WriteLine("Fitxer creat!");
+                GraphicsManager.WriteLine("Nom del fitxer:");
+
+                string name = InputManager.ReadLine();
+                name = Path.GetFileName(name);
+
+                GraphicsManager.WriteLine("Contingut:");
+
+                string content = InputManager.ReadLine();
+
+                File.WriteAllText(@"0:\" + name, content);
+
+                GraphicsManager.WriteLine("Fitxer creat correctament.");
                 Sound.SuccessSound();
             }
-            catch { Sound.ErrorSound(); Console.WriteLine("Error al crear."); }
+            catch
+            {
+                GraphicsManager.WriteLine("Error creant fitxer.");
+                Sound.ErrorSound();
+            }
         }
 
         public static void LlegirFitxer()
         {
             try
             {
-                Console.Write("Fitxer a llegir: ");
-                string file = Console.ReadLine();
-                if (File.Exists(@"0:\" + file))
+                GraphicsManager.WriteLine("Nom del fitxer:");
+
+                string name = InputManager.ReadLine();
+                string path = @"0:\" + Path.GetFileName(name);
+
+                if (!File.Exists(path))
                 {
-                    Console.WriteLine("Contingut: " + File.ReadAllText(@"0:\" + file));
-                    Sound.SuccessSound();
+                    GraphicsManager.WriteLine("El fitxer no existeix.");
+                    Sound.ErrorSound();
+                    return;
                 }
-                else { Console.WriteLine("No existeix."); Sound.ErrorSound(); }
+
+                string content = File.ReadAllText(path);
+
+                GraphicsManager.WriteLine("");
+                GraphicsManager.WriteLine("===== CONTINGUT =====");
+                GraphicsManager.WriteLine(content);
+                GraphicsManager.WriteLine("=====================");
             }
-            catch { Sound.ErrorSound(); }
+            catch
+            {
+                GraphicsManager.WriteLine("Error llegint fitxer.");
+                Sound.ErrorSound();
+            }
         }
 
-        public static void MostrarStatus(Sys.FileSystem.CosmosVFS fs)
+        public static void MostrarStatus()
         {
             try
             {
-                Console.WriteLine("Tipus: " + fs.GetFileSystemType(@"0:\"));
-                Console.WriteLine("Espai lliure: " + fs.GetAvailableFreeSpace(@"0:\"));
-                Sound.SuccessSound();
+                GraphicsManager.WriteLine("");
+                GraphicsManager.WriteLine("===== FS STATUS =====");
+
+                GraphicsManager.WriteLine("Tipus: " + fs.GetFileSystemType(@"0:\"));
+                GraphicsManager.WriteLine("Espai lliure: " + fs.GetAvailableFreeSpace(@"0:\"));
+
+                GraphicsManager.WriteLine("====================");
             }
-            catch { Sound.ErrorSound(); }
+            catch
+            {
+                GraphicsManager.WriteLine("Error obtenint status FS.");
+                Sound.ErrorSound();
+            }
         }
     }
 }
