@@ -1,4 +1,5 @@
-﻿//Calculator.cs
+﻿// Calculator.cs
+
 using System;
 
 namespace CosmosKernel1
@@ -7,35 +8,71 @@ namespace CosmosKernel1
     {
         public static void Ejecutar()
         {
-            Console.WriteLine("\n--- CALCULADORA REDos ---");
-            Console.Write("Operacio (+, -, *, /, %, sqrt): ");
-            string op = Console.ReadLine().ToLower().Trim();
-
             try
             {
-                if (op == "sqrt")
-                {
-                    Console.Write("Numero: ");
-                    double n = Convert.ToDouble(Console.ReadLine());
-                    Console.WriteLine("> Resultat: " + Math.Sqrt(n));
-                }
-                else
-                {
-                    Console.Write("Num 1: ");
-                    double a = Convert.ToDouble(Console.ReadLine());
-                    Console.Write("Num 2: ");
-                    double b = Convert.ToDouble(Console.ReadLine());
+                GraphicsManager.WriteLine("");
+                GraphicsManager.WriteLine("===== CALCULADORA =====");
+                GraphicsManager.WriteLine("Operacions:");
+                GraphicsManager.WriteLine("+  -  *  /");
+                GraphicsManager.WriteLine("");
 
-                    if (op == "+") Console.WriteLine("> Resultat: " + (a + b));
-                    else if (op == "-") Console.WriteLine("> Resultat: " + (a - b));
-                    else if (op == "*") Console.WriteLine("> Resultat: " + (a * b));
-                    else if (op == "/") Console.WriteLine("> Resultat: " + (b != 0 ? (a / b).ToString() : "Error Div/0"));
-                    else if (op == "%") Console.WriteLine("> Resultat: " + (a % b));
-                    else { Console.WriteLine("No valida."); Sound.ErrorSound(); return; }
+                GraphicsManager.WriteLine("Escriu el primer numero:");
+                string aText = InputManager.ReadLine();
+
+                GraphicsManager.WriteLine("Escriu l'operacio:");
+                string op = InputManager.ReadLine();
+
+                GraphicsManager.WriteLine("Escriu el segon numero:");
+                string bText = InputManager.ReadLine();
+
+                double a = Convert.ToDouble(aText);
+                double b = Convert.ToDouble(bText);
+
+                double result = 0;
+
+                switch (op)
+                {
+                    case "+":
+                        result = a + b;
+                        break;
+
+                    case "-":
+                        result = a - b;
+                        break;
+
+                    case "*":
+                        result = a * b;
+                        break;
+
+                    case "/":
+                        if (b == 0)
+                        {
+                            GraphicsManager.WriteLine("Error: Divisio per zero.");
+                            Sound.ErrorSound();
+                            return;
+                        }
+
+                        result = a / b;
+                        break;
+
+                    default:
+                        GraphicsManager.WriteLine("Operacio invalida.");
+                        Sound.ErrorSound();
+                        return;
                 }
+
+                GraphicsManager.WriteLine("");
+                GraphicsManager.WriteLine("Resultat: " + result);
+                GraphicsManager.WriteLine("=======================");
+                GraphicsManager.WriteLine("");
+
                 Sound.SuccessSound();
             }
-            catch { Sound.ErrorSound(); Console.WriteLine("Error: Introdueix numeros."); }
+            catch
+            {
+                GraphicsManager.WriteLine("Error a la calculadora.");
+                Sound.ErrorSound();
+            }
         }
     }
 }
