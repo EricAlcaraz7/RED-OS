@@ -1,6 +1,7 @@
 # 🔴 RED Operating System (REDos)
 
-![REDos Logo](sandbox:/mnt/data/logo_futurista_de_sistema_operativo_red.png)
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/601be427-7931-40f6-9d23-890086542cbd" />
+
 
 REDos és un sistema operatiu educatiu desenvolupat amb C# i Cosmos OS. El projecte ha estat creat amb l’objectiu d’entendre el funcionament intern d’un sistema operatiu: gestió de comandes, sistema de fitxers, gràfics, so i configuració bàsica de xarxa.
 
