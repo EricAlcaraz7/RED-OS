@@ -1,4 +1,5 @@
-﻿// Kernel.cs
+﻿// Kernel.cs (menÃº SIN fs_ prefijos)
+
 using System;
 using Sys = Cosmos.System;
 
@@ -6,107 +7,85 @@ namespace CosmosKernel1
 {
     public class Kernel : Sys.Kernel
     {
-        Sys.FileSystem.CosmosVFS fs;
-
         protected override void BeforeRun()
         {
-            // 1. Teclado español
-            Sys.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.ESStandardLayout());
-
-            // 2. Gráficos - pantalla de bienvenida
             GraphicsManager.Init();
-            GraphicsManager.DrawWelcomeScreen();
+            FileSystemManager.Init();
 
-            // 3. Sistema de ficheros
-            try
-            {
-                fs = new Sys.FileSystem.CosmosVFS();
-                Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
-            }
-            catch { }
-
-            // 4. Sonido de inicio
             Sound.StartupSound();
 
-            // 5. Esperar ENTER
-            bool continuar = false;
-            while (!continuar)
-            {
-                if (Sys.KeyboardManager.TryReadKey(out var key))
-                {
-                    if (key.Key == Sys.ConsoleKeyEx.Enter)
-                        continuar = true;
-                }
-            }
-
-            // 6. Interfície principal
-            Console.Clear();
-            GraphicsManager.DrawInterface();
+            GraphicsManager.WriteLine("REDos v1.5.0");
+            GraphicsManager.WriteLine("----------------");
+            GraphicsManager.WriteLine("help -> veure comandes");
+            GraphicsManager.WriteLine("");
         }
 
         protected override void Run()
         {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("REDos > ");
-            Console.ForegroundColor = ConsoleColor.White;
+            string cmd = InputManager.ReadLine();
 
-            var input = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(cmd))
+                return;
 
-            if (!string.IsNullOrEmpty(input))
-            {
-                string cmd = input.ToLower().Trim();
-                CommandManager.Save(cmd);
-                ExecuteCommand(cmd);
-            }
+            CommandManager.Save(cmd);
 
-            GraphicsManager.DrawInterface();
-        }
-
-        public void ExecuteCommand(string input)
-        {
-            switch (input)
+            switch (cmd.ToLower())
             {
                 case "help":
-                    UI.MostrarAyuda();
+                    GraphicsManager.WriteLine("");
+                    GraphicsManager.WriteLine("===== COMANDES =====");
+                    GraphicsManager.WriteLine("help");
+                    GraphicsManager.WriteLine("calc");
+                    GraphicsManager.WriteLine("clear");
+                    GraphicsManager.WriteLine("history");
+                    GraphicsManager.WriteLine("ls");
+                    GraphicsManager.WriteLine("create");
+                    GraphicsManager.WriteLine("read");
+                    GraphicsManager.WriteLine("status");
+                    GraphicsManager.WriteLine("reboot");
+                    GraphicsManager.WriteLine("shutdown");
+                    GraphicsManager.WriteLine("====================");
                     break;
-                case "ls":
-                    FileSystemManager.ListarDirectorio(@"0:\");
-                    break;
-                case "crear":
-                    FileSystemManager.CrearFitxer();
-                    break;
-                case "llegir":
-                    FileSystemManager.LlegirFitxer();
-                    break;
+
                 case "calc":
                     Calculator.Ejecutar();
                     break;
+
                 case "history":
                     CommandManager.Show();
-                    string recovered = CommandManager.GetCommand();
-                    if (recovered != null)
-                    {
-                        Console.WriteLine($"Executant: {recovered}");
-                        ExecuteCommand(recovered);
-                    }
                     break;
+
                 case "clear":
-                    Console.Clear();
-                    GraphicsManager.DrawInterface();
+                    GraphicsManager.Clear();
                     break;
+
+                // FILESYSTEM
+                case "ls":
+                    FileSystemManager.Listar(@"0:\");
+                    break;
+
+                case "create":
+                    FileSystemManager.CrearFitxer();
+                    break;
+
+                case "read":
+                    FileSystemManager.LlegirFitxer();
+                    break;
+
                 case "status":
-                    FileSystemManager.MostrarStatus(fs);
+                    FileSystemManager.MostrarStatus();
                     break;
+
                 case "reboot":
                     Sys.Power.Reboot();
                     break;
+
                 case "shutdown":
                     Sys.Power.Shutdown();
                     break;
+
                 default:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Comanda no reconeguda: " + input);
-                    Console.ForegroundColor = ConsoleColor.White;
+                    GraphicsManager.WriteLine("Comanda desconeguda.");
                     Sound.ErrorSound();
                     break;
             }

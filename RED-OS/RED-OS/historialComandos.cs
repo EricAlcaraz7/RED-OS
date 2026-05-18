@@ -1,4 +1,5 @@
-﻿//historialComandos.cs
+﻿// CommandManager.cs
+
 using System;
 using System.Collections.Generic;
 
@@ -10,25 +11,29 @@ namespace CosmosKernel1
 
         public static void Save(string cmd)
         {
-            if (history.Count >= 5) history.RemoveAt(0);
-            history.Add(cmd);
+            if (!string.IsNullOrWhiteSpace(cmd))
+                history.Add(cmd);
         }
 
         public static void Show()
         {
-            Console.WriteLine("\n--- HISTORIAL ---");
-            for (int i = 0; i < history.Count; i++) Console.WriteLine($"{i}: {history[i]}");
-            Sound.SuccessSound();
-        }
+            GraphicsManager.WriteLine("");
+            GraphicsManager.WriteLine("===== HISTORIAL =====");
 
-        public static string GetCommand()
-        {
-            Console.Write("Index del comando: ");
-            if (int.TryParse(Console.ReadLine(), out int index) && index >= 0 && index < history.Count)
-                return history[index];
+            if (history.Count == 0)
+            {
+                GraphicsManager.WriteLine("No hi ha historial.");
+                GraphicsManager.WriteLine("=====================");
+                return;
+            }
 
-            Sound.ErrorSound();
-            return null;
+            for (int i = 0; i < history.Count; i++)
+            {
+                GraphicsManager.WriteLine(i + ": " + history[i]);
+            }
+
+            GraphicsManager.WriteLine("=====================");
+            GraphicsManager.WriteLine("");
         }
     }
 }
