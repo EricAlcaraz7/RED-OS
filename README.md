@@ -25,10 +25,6 @@ El sistema està pensat per a finalitats educatives i d’aprenentatge de baix n
 
 # 📸 Captures i demo
 
-## Pantalla principal
-
-![REDos UI](https://via.placeholder.com/900x500/000000/ff0000?text=REDos+Graphic+Interface)
-
 ## Exemple de calculadora
 
 ```txt
